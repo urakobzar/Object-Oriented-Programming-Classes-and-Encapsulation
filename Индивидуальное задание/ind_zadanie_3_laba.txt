@@ -1,0 +1,262 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+int ReadingCorrectSize()
+{
+	int size;
+	while (true)
+	{
+		cin >> size;
+		if (size <= 0)
+		{
+			cout << "Unfortunately, you made a mistake\n";
+			cout << "(The initial number must be an integer";
+			cout << " greater than 0)\n";
+			cout << "Enter again: ";
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+		else
+		{
+			break;
+		}
+	}
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	return size;
+}
+
+
+
+class Comment
+{
+private:
+	string _author;
+	string _text;
+	int _rate;
+
+public:
+	string GetAuthor()
+	{
+		return this->_author;
+	}
+
+	string GetText()
+	{
+		return this->_text;
+	}
+
+	int GetRate()
+	{
+		return this->_rate;
+	}
+
+	void SetAuthor(string author)
+	{
+		this->_author = author;
+	}
+	
+	void SetText(string text)
+	{
+		this->_text = text;
+	}
+
+	void SetRate(int rate)
+	{
+		if ((rate < 0) || (rate>5))
+		{
+			throw exception("Rate must be between 0 and 5");
+		}
+		this->_rate = rate;
+	}
+
+	Comment(string author, string text, int rate)
+	{
+		this->SetAuthor(author);
+		this->SetText(text);
+		this->SetRate(rate);
+	}
+	
+	Comment()
+	{
+
+	}
+};
+
+class Place
+{
+private:
+	string _name;
+	Comment* _comments;
+	int _commentsCount;
+
+public:
+
+	string GetName()
+	{
+		return this->_name;
+	}
+
+	Comment* GetComment()
+	{
+		return this->_comments;
+	}
+
+	int GetCommentsCount()
+	{
+		return this->_commentsCount;
+	}
+
+	void SetName(string name)
+	{
+		this->_name = name;
+	}
+
+	void SetComments(Comment* comments)
+	{
+		this->_comments = comments;
+	}
+
+	void SetCommentsCount(int commentsCount)
+	{
+		this->_commentsCount = commentsCount;
+	}
+
+	Place(string name, Comment* comments, int commentsCount)
+	{
+		this->SetName(name);
+		this->SetComments(comments);
+		this->SetCommentsCount(commentsCount);
+	}
+
+	Place()
+	{
+
+	}
+
+	double GetRate()
+	{
+		double sum = 0;
+		for (int j = 0; j < 3; j++)
+		{
+			sum = sum + this->_comments[j].GetRate();
+		}
+		return sum / 3;
+	}
+};
+
+
+class Building
+{
+private:
+	string _address;
+	Place* _places;
+	int _placesCount;
+
+public:
+	string GetAddress()
+	{
+		return this->_address;
+	}
+
+	Place* GetPlaces()
+	{
+		return this->_places;
+	}
+
+	int GetPlacesCount()
+	{
+		return this->_placesCount;
+	}
+
+	void SetAddress(string address)
+	{
+		this->_address = address;
+	}
+
+	void SetPlaces(Place* places)
+	{
+		this->_places = places;
+	}
+
+	void SetPlacesCount(int placesCount)
+	{
+		if (placesCount < 0)
+		{
+			throw exception("The number of establishments must be non - negative");
+		}
+		this->_placesCount = placesCount;
+	}
+
+	Building(string address, Place* places, int placesCount)
+	{
+		this->SetAddress(address);
+		this->SetPlaces(places);
+		this->SetPlacesCount(placesCount);
+	}
+
+	Building()
+	{
+
+	}
+};
+
+int main()
+{
+	string name;
+	string author;
+	string text;
+	int rate;
+	Place* places = new Place[5];
+	for (int i = 0; i < 5; i++)
+	{
+		cout << "\nEnter a name [" << i + 1 << "] of place: ";
+		cin >> name;
+		places[i].SetName(name);
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		places[i].SetCommentsCount(3);
+		Comment* comments = new Comment[3];
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				cout << "\nEnter a author [" << j + 1 << "] of comment: ";
+				cin >> author;
+				comments[j].SetAuthor(author);
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "\nEnter a text [" << j + 1 << "] of comment: ";
+				cin >> text;
+				comments[j].SetText(text);
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "\nEnter a rate [" << j + 1 << "] of comment: ";
+				rate = ReadingCorrectSize();
+				comments[j].SetRate(rate);
+			}
+		}
+		places[i].SetComments(comments);
+	}
+	Building building;
+	string address;
+	cout << "\nEnter a address: ";
+	cin >> address;
+	building.SetAddress(address);
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	building.SetPlaces(places);
+	building.SetPlacesCount(5);
+	for (int i = 0; i < 5; i++)
+	{
+		cout << "\nPlace [" << i + 1 << "]: " << building.GetPlaces()[i].GetName();
+		for (int j = 0; j < 3; j++)
+		{
+			cout << "\n\n\nComment [" << j + 1 << "]: \n";
+			cout << "\nAuthor: ";
+			cout << building.GetPlaces()[i].GetComment()[j].GetAuthor();
+			cout << "\nText: ";
+			cout << building.GetPlaces()[i].GetComment()[j].GetText();
+		}
+	}
+	cout << endl;
+	system("PAUSE");
+	return 0;
+}
